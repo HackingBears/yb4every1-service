@@ -19,7 +19,6 @@ namespace HackingBears.GameService.Hubs
         public GameHub(IGamePlayManager gamePlayManager)
         {
             GamePlayManager = gamePlayManager;
-            GamePlayManager.OpenGameForRegistration(1);
         }
 
         #endregion
