@@ -100,9 +100,9 @@ namespace HackingBears.GameService.Core
             }
         }
 
-        public void AddAction(GameAction action)
+        public void AddAction(Voting voting)
         {
-            throw new NotImplementedException();
+            
         }
 
         #endregion

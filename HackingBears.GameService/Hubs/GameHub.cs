@@ -36,9 +36,9 @@ namespace HackingBears.GameService.Hubs
             await Clients.Caller.UpdateGameFrame(frame);
         }
         
-        public Task VoteNextAction(GameAction action)
+        public Task VoteNextAction(Voting voting)
         {
-            GamePlayManager.AddAction(action);
+            GamePlayManager.AddAction(voting);
             return Task.CompletedTask;
         }
 
