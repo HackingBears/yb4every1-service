@@ -9,6 +9,17 @@ namespace HackingBears.GameService.Domain
 
         #endregion
 
+        #region Methods
+
+        public Position Clone()
+            => new Position
+            {
+                X = X,
+                Y = Y
+            };
+
+        #endregion
+
         public static Position operator +(Position a, Position b)
             => new Position
             {

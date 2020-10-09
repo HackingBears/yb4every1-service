@@ -17,5 +17,27 @@ namespace HackingBears.GameService.Domain
         public List<FootballPlayer> Players { get; set; }
 
         #endregion
+
+        public GameFrame Clone()
+        {
+            GameFrame frame = new GameFrame
+            {
+                GameId = GameId,
+                FrameExpiration = FrameExpiration,
+                FrameNumber = FrameNumber,
+                GameEvent = GameEvent,
+                GameScore = GameScore,
+                GameTime = GameTime,
+                Ball = Ball.Clone(),
+                Players = new List<FootballPlayer>()
+            };
+
+            foreach (FootballPlayer player in Players)
+            {
+                frame.Players.Add(player.Clone());
+            }
+
+            return frame;
+        }
     }
 }
