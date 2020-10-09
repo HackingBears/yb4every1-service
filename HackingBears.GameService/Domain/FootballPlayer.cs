@@ -2,10 +2,12 @@ namespace HackingBears.GameService.Domain
 {
     public sealed class FootballPlayer
     {
+        #region Properties
+
+        public bool HasBall { get; set; }
         public int Id { get; set; }
-        public int JerseyNumber { get; set; }
-        public string JerseyColor { get; set; }
-        public string ShortColor { get; set; }
         public Position Position { get; set; }
+
+        #endregion
     }
 }

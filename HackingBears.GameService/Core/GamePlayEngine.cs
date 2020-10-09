@@ -6,11 +6,12 @@ using HackingBears.GameService.Domain;
 
 namespace HackingBears.GameService.Core
 {
-    public sealed class GameEngine : IGameEngine
+    public sealed class GamePlayEngine : IGamePlayEngine
     {
         #region Events
 
         public event EventHandler<GameFrameEventArgs> OnFrameChanged;
+        public event EventHandler<GameFinishedEventArgs> OnGameFinished;
 
         #endregion
 
@@ -18,11 +19,13 @@ namespace HackingBears.GameService.Core
 
         public int GameTime { get; set; }
 
-        public GameState State { get; } = GameState.NotStarted;
+        public GameStateDescription State { get; } = GameStateDescription.OpenForRegistration;
 
         private int FrameCounter { get; set; }
 
-        private Guid GameId { get; } = Guid.NewGuid();
+        private int GameId { get; } = 1;
+
+        private PlayerIdSelector PlayerIdSelector { get; } = new PlayerIdSelector();
 
         private Timer Timer { get; }
 
@@ -30,7 +33,7 @@ namespace HackingBears.GameService.Core
 
         #region Constructor
 
-        public GameEngine()
+        public GamePlayEngine()
         {
             Timer = new Timer
             {
@@ -44,6 +47,16 @@ namespace HackingBears.GameService.Core
 
         #region Methods
 
+        public GameRegistration RegisterPlayer(in string userId, TeamType teamType)
+            => new GameRegistration
+            {
+                PlayerId = PlayerIdSelector.Register(teamType),
+                UserId = userId
+            };
+
+        public GameFrame GetCurrentFrame()
+            => CreateGameFrame();
+
         private void Timer_OnElapsed(object sender, ElapsedEventArgs e)
         {
             GameFrame frame = CreateGameFrame();
@@ -51,7 +64,8 @@ namespace HackingBears.GameService.Core
 
             OnFrameChanged?.Invoke(this, new GameFrameEventArgs
                 {
-                    Frame = CreateGameFrame()
+                    Frame = CreateGameFrame(),
+                    GameId = GameId
                 }
             );
             Console.WriteLine(GameTime);
@@ -59,6 +73,11 @@ namespace HackingBears.GameService.Core
             {
                 Timer.Stop();
                 Console.WriteLine("Game - Stopped");
+                OnGameFinished?.Invoke(this, new GameFinishedEventArgs
+                    {
+                        GameId = GameId
+                    }
+                );
             }
             else
             {
@@ -66,9 +85,6 @@ namespace HackingBears.GameService.Core
                 FrameCounter += 1;
             }
         }
-
-        public GameFrame GetCurrentFrame(Guid registrationGameId)
-            => CreateGameFrame();
 
         public void Start()
         {
@@ -81,14 +97,6 @@ namespace HackingBears.GameService.Core
             //Do Nothing
         }
 
-        public GameRegistration RegisterPlayer(in long userId)
-            => new GameRegistration
-            {
-                GameId = GameId,
-                PlayerId = 5,
-                UserId = userId
-            };
-
         private GameFrame CreateGameFrame()
         {
             GameFrame frame = new GameFrame();
@@ -98,36 +106,20 @@ namespace HackingBears.GameService.Core
             frame.GameEvent = string.Empty;
             frame.GameScore = "0:0";
             frame.GameTime = GameTime.ToString("00") + " min";
-            frame.Teams = new List<Team>
+            frame.Players = new List<FootballPlayer>
             {
-                new Team
-                {
-                    ClubName = "YB",
-                    Type = TeamType.Home,
-                    Players = new List<FootballPlayer>
-                    {
-                        CreateYbGoalKeeper(),
-                        CreateYbPlayer(2),
-                        CreateYbPlayer(3),
-                        CreateYbPlayer(4),
-                        CreateYbPlayer(5),
-                        CreateYbPlayer(6)
-                    }
-                },
-                new Team
-                {
-                    ClubName = "FC Basel",
-                    Type = TeamType.Away,
-                    Players = new List<FootballPlayer>
-                    {
-                        CreateBaselGoalKeeper(),
-                        CreateBaselPlayer(7),
-                        CreateBaselPlayer(8),
-                        CreateBaselPlayer(9),
-                        CreateBaselPlayer(10),
-                        CreateBaselPlayer(11)
-                    }
-                }
+                CreateYbGoalKeeper(),
+                CreateYbPlayer(2),
+                CreateYbPlayer(3),
+                CreateYbPlayer(4),
+                CreateYbPlayer(5),
+                CreateYbPlayer(6),
+                CreateBaselGoalKeeper(),
+                CreateBaselPlayer(7),
+                CreateBaselPlayer(8),
+                CreateBaselPlayer(9),
+                CreateBaselPlayer(10),
+                CreateBaselPlayer(11)
             };
 
             return frame;
@@ -137,9 +129,6 @@ namespace HackingBears.GameService.Core
             => new FootballPlayer
             {
                 Id = 1,
-                JerseyColor = "#000000",
-                ShortColor = "#F7FE2E",
-                JerseyNumber = 1,
                 Position = new Position
                 {
                     X = 0,
@@ -151,9 +140,6 @@ namespace HackingBears.GameService.Core
             => new FootballPlayer
             {
                 Id = id,
-                JerseyColor = "#F7FE2E",
-                ShortColor = "#000000",
-                JerseyNumber = id,
                 Position = FootballField.CreateRandomPosition()
             };
 
@@ -161,9 +147,6 @@ namespace HackingBears.GameService.Core
             => new FootballPlayer
             {
                 Id = 6,
-                JerseyColor = "##0404B4",
-                ShortColor = "##FF0000",
-                JerseyNumber = 1,
                 Position = new Position
                 {
                     X = 0,
@@ -175,9 +158,6 @@ namespace HackingBears.GameService.Core
             => new FootballPlayer
             {
                 Id = id,
-                JerseyColor = "#FF0000",
-                ShortColor = "##0404B4",
-                JerseyNumber = id - 5,
                 Position = FootballField.CreateRandomPosition()
             };
 

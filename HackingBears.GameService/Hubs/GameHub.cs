@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using HackingBears.GameService.Core;
 using HackingBears.GameService.Domain;
@@ -5,44 +6,40 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace HackingBears.GameService.Hubs
 {
-    public sealed class GameHub : Hub<IGameAction>
+    public sealed class GameHub : Hub<IGameHubAction>
     {
         #region Properties
 
-        private IGameEngine GameEngine { get; }
+        private IGamePlayManager GamePlayManager { get; }
 
         #endregion
 
         #region Constructor
 
-        public GameHub(IGameEngine gameEngine)
+        public GameHub(IGamePlayManager gamePlayManager)
         {
-            GameEngine = gameEngine;
-            GameEngine.OnFrameChanged += OnGameFrameChanged;
+            GamePlayManager = gamePlayManager;
+            GamePlayManager.OpenGameForRegistration(1);
         }
 
         #endregion
 
         #region Methods
 
-        public async Task RegisterToGame(long userId)
+        public async Task RegisterToGame(int gameId, String teamType)
         {
-            GameRegistration registration = GameEngine.RegisterPlayer(userId);
+            TeamType type = Enum.Parse<TeamType>(teamType);
+            GameRegistration registration = GamePlayManager.RegisterPlayer(Context.ConnectionId, gameId, type);
             await Clients.Caller.CompleteRegistration(registration);
 
-            GameFrame frame = GameEngine.GetCurrentFrame(registration.GameId);
+            GameFrame frame = GamePlayManager.GetCurrentFrame(gameId);
             await Clients.Caller.UpdateGameFrame(frame);
         }
-
+        
         public Task VoteNextAction(GameAction action)
         {
-            GameEngine.AddAction(action);
+            GamePlayManager.AddAction(action);
             return Task.CompletedTask;
-        }
-
-        private void OnGameFrameChanged(object sender, GameFrameEventArgs args)
-        {
-            Clients.All.UpdateGameFrame(args.Frame).Wait();
         }
 
         #endregion

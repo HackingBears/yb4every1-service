@@ -1,4 +1,6 @@
-﻿using HackingBears.GameService.Core;
+﻿using System.Collections.Generic;
+using HackingBears.GameService.DataAccess;
+using HackingBears.GameService.Domain;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HackingBears.GameService.Controllers
@@ -9,32 +11,31 @@ namespace HackingBears.GameService.Controllers
     {
         #region Properties
 
-        private IGameEngine GameEngine { get; }
+        private IGameRepository GameRepository { get; }
 
         #endregion
 
         #region Constructor
 
-        public GameController(IGameEngine gameEngine)
+        public GameController(IGameRepository gameRepository)
         {
-            GameEngine = gameEngine;
+            GameRepository = gameRepository;
         }
 
         #endregion
 
         #region Methods
 
-        [HttpPost]
-        public ActionResult CreateGame()
+        [HttpGet]
+        public ActionResult<List<Game>> GetGames()
+            => Ok(GameRepository.GetGames());
+
+        [HttpGet]
+        [Route("{gameId}")]
+        public ActionResult<Game> GetGamesById(int gameId)
         {
-            switch (GameEngine.State)
-            {
-                case GameState.NotStarted:
-                case GameState.Finished:
-                    GameEngine.Start();
-                    return Ok();
-                default: return UnprocessableEntity("Game already started");
-            }
+            Game game = GameRepository.GetGameByGameId(gameId);
+            return game != null ? (ActionResult) Ok(game) : NotFound();
         }
 
         #endregion

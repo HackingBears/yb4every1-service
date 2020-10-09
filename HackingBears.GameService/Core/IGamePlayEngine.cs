@@ -3,30 +3,31 @@ using HackingBears.GameService.Domain;
 
 namespace HackingBears.GameService.Core
 {
-    public interface IGameEngine
+    public interface IGamePlayEngine
     {
         #region Events
 
         event EventHandler<GameFrameEventArgs> OnFrameChanged;
+        event EventHandler<GameFinishedEventArgs> OnGameFinished;
 
         #endregion
 
         #region Properties
 
-        GameState State { get; }
+        GameStateDescription State { get; }
 
         #endregion
 
         #region Methods
 
-        GameRegistration RegisterPlayer(in long userId);
+        GameRegistration RegisterPlayer(in string userId, TeamType teamType);
 
-        GameFrame GetCurrentFrame(Guid registrationGameId);
+        GameFrame GetCurrentFrame();
 
         void Start();
 
-        #endregion
-
         void AddAction(GameAction action);
+
+        #endregion
     }
 }

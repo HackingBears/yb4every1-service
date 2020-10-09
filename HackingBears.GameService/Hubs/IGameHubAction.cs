@@ -3,7 +3,7 @@ using HackingBears.GameService.Domain;
 
 namespace HackingBears.GameService.Hubs
 {
-    public interface IGameAction
+    public interface IGameHubAction
     {
         #region Methods
 
@@ -18,6 +18,11 @@ namespace HackingBears.GameService.Hubs
         /// </summary>
         /// <param name="gameRegistration"></param>
         Task CompleteRegistration(GameRegistration gameRegistration);
+
+        /// <summary>
+        ///     Spiel beenden
+        /// </summary>
+        Task GameFinished();
 
         #endregion
     }

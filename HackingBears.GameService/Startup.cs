@@ -1,5 +1,7 @@
+using System.Text.Json.Serialization;
 using HackingBears.GameService.Core;
-using HackingBears.GameService.Domain;
+using HackingBears.GameService.Data;
+using HackingBears.GameService.DataAccess;
 using HackingBears.GameService.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,8 +31,11 @@ namespace HackingBears.GameService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IGameEngine, GameEngine>();
-            services.AddMvc();
+            services.AddSingleton<IGamePlayEngine, GamePlayEngine>();
+            services.AddScoped<IGameRepository, InMemoryGameRepository>();
+            services.AddSingleton<IGamePlayManager, GamePlayManager>();
+            services.AddMvc()
+                .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
             services.AddSignalR();
         }
 

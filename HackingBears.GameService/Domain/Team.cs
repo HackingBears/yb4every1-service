@@ -1,14 +1,19 @@
-using System.Collections.Generic;
-
 namespace HackingBears.GameService.Domain
 {
-    public class Team
+    public sealed class Team
     {
-        public string ClubName { get; set; }
+        #region Properties
         
-        public TeamType Type { get; set; }
+        public int Id { get; set; }
+
+        public string Logo { get; set; }
+
+        public string Name { get; set; }
+
+        public string FirstColor { get; set; }
         
-        public List<FootballPlayer> Players { get; set; }
-        
+        public string SecondColor { get; set; }
+
+        #endregion
     }
 }
