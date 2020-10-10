@@ -14,9 +14,9 @@ namespace HackingBears.GameService.Core
     {
         #region Constants
 
-        private const int SHOOT_FACTOR = 1;
+        private const int SHOOT_FACTOR = 2;
 
-        private const int VOTING_TIME_IN_SECONDS = 3;
+        private const int VOTING_TIME_IN_SECONDS = 6;
 
         #endregion
 
@@ -33,7 +33,7 @@ namespace HackingBears.GameService.Core
         public GameFrame CurrentFrame { get; private set; }
 
         public int GameTime
-            => FrameCounter * VOTING_TIME_IN_SECONDS;
+            => (FrameCounter * VOTING_TIME_IN_SECONDS) / 3;
 
         public GameStateDescription State { get; } = GameStateDescription.OpenForRegistration;
 
@@ -84,7 +84,6 @@ namespace HackingBears.GameService.Core
 
         private void Timer_OnElapsed(object sender, ElapsedEventArgs e)
         {
- 
             // Frame klonen
             GameFrame frame = GetNextFrame(VotingManager.GetResult(FrameCounter + 1));
 
@@ -117,7 +116,6 @@ namespace HackingBears.GameService.Core
             }
             else
             {
-                // FrameCounter++;
                 Timer.Start();
             }
 

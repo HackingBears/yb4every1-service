@@ -68,10 +68,10 @@ namespace HackingBears.GameService.Core
 
                 result.GameAction = new GameAction
                 {
-                    Direction = frameVotings.Where(v => v.PlayerId == i).GroupBy(v => v.GameAction?.Direction)
-                        .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Direction.Undefined,
-                    Action = frameVotings.Where(v => v.PlayerId == i).GroupBy(v => v.GameAction?.Action)
-                        .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Action.Undefined
+                    Direction = (frameVotings.Where(v => v.PlayerId == i).GroupBy(v => v.GameAction?.Direction)
+                        .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Direction.Undefined),
+                    Action = (frameVotings.Where(v => v.PlayerId == i).GroupBy(v => v.GameAction?.Action)
+                        .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Action.Undefined)
                 };
 
                 results.Add(result);
