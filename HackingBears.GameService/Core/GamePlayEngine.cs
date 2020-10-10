@@ -80,7 +80,12 @@ namespace HackingBears.GameService.Core
             };
 
         public GameFrame GetCurrentFrame()
-            => CurrentFrame;
+        {
+            GameFrame frame = CurrentFrame;
+            frame.GameTime = GameTime.ToString("00") + " min";
+            return frame;
+        }
+           
 
         private void Timer_OnElapsed(object sender, ElapsedEventArgs e)
         {
