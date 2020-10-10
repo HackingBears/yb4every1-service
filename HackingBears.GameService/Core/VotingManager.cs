@@ -1,14 +1,11 @@
-﻿using HackingBears.GameService.Domain;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using HackingBears.GameService.Domain;
 
 namespace HackingBears.GameService.Core
 {
     public class VotingManager
     {
-
         #region Properties
 
         private int PlayerCount { get; }
@@ -28,7 +25,7 @@ namespace HackingBears.GameService.Core
         #region Methods
 
         /// <summary>
-        /// Voting hinzufügen
+        ///     Voting hinzufügen
         /// </summary>
         /// <param name="voting"></param>
         public void AddVoting(Voting voting)
@@ -47,7 +44,7 @@ namespace HackingBears.GameService.Core
         }
 
         /// <summary>
-        /// Rückgabe der Abstimmungsergebnisse
+        ///     Rückgabe der Abstimmungsergebnisse
         /// </summary>
         /// <param name="frameNumber"></param>
         /// <returns></returns>
@@ -59,19 +56,18 @@ namespace HackingBears.GameService.Core
             // Resultat zusammenzählen
             for (int i = 0; i < PlayerCount; i++)
             {
-                VotingResult result = new VotingResult()
+                VotingResult result = new VotingResult
                 {
                     PlayerId = i
                 };
 
                 result.GameAction = new GameAction
                 {
-                    Direction = Votings.Where(v => v.PlayerId == i)?.GroupBy(v => v.GameAction?.Direction)
-                                        .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Direction.Undefined,
-                    Action = Votings.Where(v => v.PlayerId == i)?.GroupBy(v => v.GameAction?.Action)
-                                     .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Domain.Action.Undefined
+                    Direction = frameVotings.Where(v => v.PlayerId == i)?.GroupBy(v => v.GameAction?.Direction)
+                        .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Direction.Undefined,
+                    Action = frameVotings.Where(v => v.PlayerId == i)?.GroupBy(v => v.GameAction?.Action)
+                        .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Action.Undefined
                 };
-
 
                 results.Add(result);
             }
@@ -80,6 +76,5 @@ namespace HackingBears.GameService.Core
         }
 
         #endregion
-
     }
-} 
+}
