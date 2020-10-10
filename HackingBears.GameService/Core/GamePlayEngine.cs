@@ -68,7 +68,7 @@ namespace HackingBears.GameService.Core
 
             OnFrameChanged?.Invoke(this, new GameFrameEventArgs
                 {
-                    Frame = CreateGameFrame(),
+                    Frame = frame,
                     GameId = GameId
                 }
             );
@@ -114,6 +114,8 @@ namespace HackingBears.GameService.Core
             frame.GameEvent = string.Empty;
             frame.GameScore = "0:0";
             frame.GameTime = GameTime.ToString("00") + " min";
+            
+            
             frame.Players = new List<FootballPlayer>
             {
                 CreateYbGoalKeeper(),
@@ -129,6 +131,8 @@ namespace HackingBears.GameService.Core
                 CreateBaselPlayer(10),
                 CreateBaselPlayer(11)
             };
+            
+            frame.Players.ForEach(p =>p.Position = FootballField.CreateRandomPosition());
 
             return frame;
         }
@@ -139,8 +143,8 @@ namespace HackingBears.GameService.Core
                 Id = 1,
                 Position = new Position
                 {
-                    X = 0,
-                    Y = -5
+                    X = -6,
+                    Y = 0
                 }
             };
 
@@ -157,8 +161,8 @@ namespace HackingBears.GameService.Core
                 Id = 6,
                 Position = new Position
                 {
-                    X = 0,
-                    Y = 5
+                    X = 6,
+                    Y = 0
                 }
             };
 

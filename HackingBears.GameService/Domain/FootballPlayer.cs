@@ -9,5 +9,17 @@ namespace HackingBears.GameService.Domain
         public Position Position { get; set; }
 
         #endregion
+
+        #region Methods
+
+        public FootballPlayer Clone()
+            => new FootballPlayer
+            {
+                Id = Id,
+                HasBall = HasBall,
+                Position = Position.Clone()
+            };
+
+        #endregion
     }
 }
