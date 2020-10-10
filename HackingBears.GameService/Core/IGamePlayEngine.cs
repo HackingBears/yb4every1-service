@@ -26,7 +26,7 @@ namespace HackingBears.GameService.Core
 
         void Start();
 
-        void AddAction(GameAction action);
+        void AddVoting(Voting voting);
 
         #endregion
     }

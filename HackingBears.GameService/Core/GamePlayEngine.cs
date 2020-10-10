@@ -29,6 +29,8 @@ namespace HackingBears.GameService.Core
 
         private Timer Timer { get; }
 
+        private VotingManager VotingManager { get; }
+
         #endregion
 
         #region Constructor
@@ -41,6 +43,8 @@ namespace HackingBears.GameService.Core
                 AutoReset = true
             };
             Timer.Elapsed += Timer_OnElapsed;
+
+            VotingManager = new VotingManager(12);
         }
 
         #endregion
@@ -92,9 +96,13 @@ namespace HackingBears.GameService.Core
             Timer.Start();
         }
 
-        public void AddAction(GameAction action)
+        public void AddVoting(Voting voting)
         {
-            //Do Nothing
+            // Voting nur annehmen wenn FrameNumber dem nächsten Frame entspricht
+            if (voting.FrameNumber == FrameCounter+1)
+            {
+                VotingManager.AddVoting(voting);
+            }
         }
 
         private GameFrame CreateGameFrame()

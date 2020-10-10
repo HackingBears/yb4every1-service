@@ -100,9 +100,12 @@ namespace HackingBears.GameService.Core
             }
         }
 
-        public void AddAction(Voting voting)
+        public void AddVoting(Voting voting)
         {
-            
+            lock (((ICollection)GamePlayEngines).SyncRoot)
+            {
+                GamePlayEngines[voting.GameId].AddVoting(voting);
+            }
         }
 
         #endregion

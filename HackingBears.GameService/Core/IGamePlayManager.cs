@@ -12,7 +12,7 @@ namespace HackingBears.GameService.Core
 
         void Start(int gameId);
 
-        void AddAction(Voting voting);
+        void AddVoting(Voting voting);
 
         public void OpenGameForRegistration(int gameId);
 

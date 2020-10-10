@@ -37,7 +37,7 @@ namespace HackingBears.GameService.Hubs
         
         public Task VoteNextAction(Voting voting)
         {
-            GamePlayManager.AddAction(voting);
+            GamePlayManager.AddVoting(voting);
             return Task.CompletedTask;
         }
 

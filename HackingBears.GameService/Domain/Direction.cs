@@ -7,6 +7,7 @@ namespace HackingBears.GameService.Domain
 {
     public enum Direction
     {
+        Undefined = 0,
         N = 1,
         NO = 2,
         O = 3,

@@ -2,7 +2,7 @@ namespace HackingBears.GameService.Domain
 {
     public sealed class GameAction
     {
-        public Action Action { get; }
-        public Direction Direction { get; }
+        public Action Action { get; set; }
+        public Direction Direction { get; set; }
     }
 }
