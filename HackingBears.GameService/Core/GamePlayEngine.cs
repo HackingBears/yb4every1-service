@@ -12,6 +12,7 @@ namespace HackingBears.GameService.Core
 
         public event EventHandler<GameFrameEventArgs> OnFrameChanged;
         public event EventHandler<GameFinishedEventArgs> OnGameFinished;
+        public event EventHandler<GoalEventArgs> OnGoal;
 
         #endregion
 
@@ -172,6 +173,11 @@ namespace HackingBears.GameService.Core
                 Id = id,
                 Position = FootballField.CreateRandomPosition()
             };
+
+        public void GameFinished()
+        { 
+            
+        }
 
         #endregion
     }

@@ -1,5 +1,6 @@
 ﻿using HackingBears.GameService.Domain;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace HackingBears.GameService.Core
         #region Properties
 
         private int PlayerCount { get; }
-        private List<Voting> Votings { get; } = new List<Voting>();
+        internal ConcurrentBag<Voting> Votings { get; } = new ConcurrentBag<Voting>();
 
         #endregion
 
@@ -38,7 +39,10 @@ namespace HackingBears.GameService.Core
             if (userVoting != null)
             {
                 // Bestehdendes Voting aktualisieren
-                userVoting = voting;
+                if (Votings.TryTake(out _))
+                {
+                    Votings.Add(voting);
+                }
             }
             else
             {
@@ -66,12 +70,11 @@ namespace HackingBears.GameService.Core
 
                 result.GameAction = new GameAction
                 {
-                    Direction = Votings.Where(v => v.PlayerId == i)?.GroupBy(v => v.GameAction?.Direction)
+                    Direction = frameVotings.Where(v => v.PlayerId == i)?.GroupBy(v => v.GameAction?.Direction)
                                         .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Direction.Undefined,
-                    Action = Votings.Where(v => v.PlayerId == i)?.GroupBy(v => v.GameAction?.Action)
+                    Action = frameVotings.Where(v => v.PlayerId == i)?.GroupBy(v => v.GameAction?.Action)
                                      .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Domain.Action.Undefined
                 };
-
 
                 results.Add(result);
             }

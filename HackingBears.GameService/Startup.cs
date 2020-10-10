@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 using HackingBears.GameService.Core;
 using HackingBears.GameService.Data;
@@ -52,6 +53,43 @@ namespace HackingBears.GameService
                     endpoints.MapHub<GameHub>("/app/gamehub");
                 }
             );
+
+            VotingManager vm = new VotingManager(12);
+            Random rnd = new Random();
+            for (int i = 0; i < 200; i++)
+            {
+                int pId = rnd.Next(0, 12);
+                Domain.Voting v = new Domain.Voting()
+                {
+                    FrameNumber = 1,
+                    PlayerId = pId,
+                    GameId = 1,
+                    UserId = Guid.NewGuid().ToString(),
+                    GameAction = new Domain.GameAction()
+                    {
+                        Action = (Domain.Action)rnd.Next(1, 2),
+                        Direction = (Domain.Direction)rnd.Next(1, 9)
+                    }
+                };
+                vm.AddVoting(v);
+            }
+            
+
+            System.Collections.Generic.List<VotingResult> results = vm.GetResult(1);
+
+            Domain.Voting v2 = new Voting()
+            {
+                FrameNumber = 1,
+                PlayerId = 2,
+                GameId = 1,
+                UserId = vm.Votings.First().UserId,
+                GameAction = new GameAction()
+                {
+                    Action = (Domain.Action)rnd.Next(1, 2),
+                    Direction = (Direction)rnd.Next(1, 9)
+                }
+            };
+            vm.AddVoting(v2);
         }
 
         #endregion

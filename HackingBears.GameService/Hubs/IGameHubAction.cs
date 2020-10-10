@@ -24,6 +24,13 @@ namespace HackingBears.GameService.Hubs
         /// </summary>
         Task GameFinished();
 
+        /// <summary>
+        ///     Tor
+        /// </summary>
+        /// <param name="team"></param>
+        /// <returns></returns>
+        Task Goal(Team team);
+
         #endregion
     }
 }

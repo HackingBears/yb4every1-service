@@ -43,6 +43,7 @@ namespace HackingBears.GameService.Core
                 IGamePlayEngine gamePlayEngine = new GamePlayEngine();
                 gamePlayEngine.OnFrameChanged += GamePlayEngine_OnFrameChanged;
                 gamePlayEngine.OnGameFinished += GamePlayEngine_OnGameFinished;
+                gamePlayEngine.OnGoal += GamePlayEngine_OnGoal;
                 GamePlayEngines.Add(gameId, gamePlayEngine);
             }
         }
@@ -76,6 +77,11 @@ namespace HackingBears.GameService.Core
             HubContext.Clients.All.GameFinished().Wait();
         }
 
+        private void GamePlayEngine_OnGoal(object sender, GoalEventArgs e)
+        {
+            HubContext.Clients.All.Goal(e.Team).Wait();
+        }
+
         public GameRegistration RegisterPlayer(in string userId, in int gameId, TeamType teamType)
         {
             lock (((ICollection) GamePlayEngines).SyncRoot)
@@ -105,6 +111,14 @@ namespace HackingBears.GameService.Core
             lock (((ICollection)GamePlayEngines).SyncRoot)
             {
                 GamePlayEngines[voting.GameId].AddVoting(voting);
+            }
+        }
+
+        public void GameFinished(int gameId)
+        {
+            lock (((ICollection)GamePlayEngines).SyncRoot)
+            {
+                GamePlayEngines[gameId].GameFinished();
             }
         }
 
