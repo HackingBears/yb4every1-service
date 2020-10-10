@@ -29,7 +29,7 @@ namespace HackingBears.GameService.Hubs
         /// </summary>
         /// <param name="team"></param>
         /// <returns></returns>
-        Task Goal(Team team);
+        Task Goal(GameFrame frame);
 
         #endregion
     }

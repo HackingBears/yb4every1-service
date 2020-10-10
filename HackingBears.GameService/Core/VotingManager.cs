@@ -1,17 +1,17 @@
-﻿using HackingBears.GameService.Domain;
-using System;
+﻿using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using HackingBears.GameService.Domain;
 
 namespace HackingBears.GameService.Core
 {
-    public class VotingManager
+    public sealed class VotingManager
     {
         #region Properties
 
-        private int PlayerCount { get; }
         internal ConcurrentBag<Voting> Votings { get; } = new ConcurrentBag<Voting>();
+
+        private int PlayerCount { get; }
 
         #endregion
 
@@ -68,10 +68,10 @@ namespace HackingBears.GameService.Core
 
                 result.GameAction = new GameAction
                 {
-                    Direction = frameVotings.Where(v => v.PlayerId == i)?.GroupBy(v => v.GameAction?.Direction)
-                                        .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Direction.Undefined,
-                    Action = frameVotings.Where(v => v.PlayerId == i)?.GroupBy(v => v.GameAction?.Action)
-                                     .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Domain.Action.Undefined
+                    Direction = frameVotings.Where(v => v.PlayerId == i).GroupBy(v => v.GameAction?.Direction)
+                        .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Direction.Undefined,
+                    Action = frameVotings.Where(v => v.PlayerId == i).GroupBy(v => v.GameAction?.Action)
+                        .OrderByDescending(gp => gp.Count()).Select(v => v.Key).FirstOrDefault() ?? Action.Undefined
                 };
 
                 results.Add(result);

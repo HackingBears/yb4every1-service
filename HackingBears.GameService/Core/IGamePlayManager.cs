@@ -18,8 +18,6 @@ namespace HackingBears.GameService.Core
 
         GameStateDescription GetGameState(in int gameId);
 
-        public void GameFinished(int gameId);
-
         #endregion
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using HackingBears.GameService.Core;
 using HackingBears.GameService.Domain;
@@ -37,6 +38,7 @@ namespace HackingBears.GameService.Hubs
         
         public Task VoteNextAction(Voting voting)
         {
+            Console.WriteLine(JsonSerializer.Serialize(voting));
             GamePlayManager.AddVoting(voting);
             return Task.CompletedTask;
         }
