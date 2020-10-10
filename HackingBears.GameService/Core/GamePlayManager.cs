@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +28,14 @@ namespace HackingBears.GameService.Core
 
         #region Methods
 
+        public void AddVoting(Voting voting)
+        {
+            lock (((ICollection) GamePlayEngines).SyncRoot)
+            {
+                GamePlayEngines[voting.GameId].AddVoting(voting);
+            }
+        }
+
         public void OpenGameForRegistration(int gameId)
         {
             lock (((ICollection) GamePlayEngines).SyncRoot)
@@ -40,7 +47,7 @@ namespace HackingBears.GameService.Core
                 }
 
                 // Neue GamePlay-Engine hinzufügen
-                IGamePlayEngine gamePlayEngine = new GamePlayEngine();
+                IGamePlayEngine gamePlayEngine = new GamePlayEngine(gameId);
                 gamePlayEngine.OnFrameChanged += GamePlayEngine_OnFrameChanged;
                 gamePlayEngine.OnGameFinished += GamePlayEngine_OnGameFinished;
                 gamePlayEngine.OnGoal += GamePlayEngine_OnGoal;

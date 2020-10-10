@@ -1,15 +1,13 @@
 ﻿using HackingBears.GameService.Domain;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using HackingBears.GameService.Domain;
 
 namespace HackingBears.GameService.Core
 {
     public class VotingManager
     {
-
         #region Properties
 
         private int PlayerCount { get; }
@@ -29,7 +27,7 @@ namespace HackingBears.GameService.Core
         #region Methods
 
         /// <summary>
-        /// Voting hinzufügen
+        ///     Voting hinzufügen
         /// </summary>
         /// <param name="voting"></param>
         public void AddVoting(Voting voting)
@@ -51,7 +49,7 @@ namespace HackingBears.GameService.Core
         }
 
         /// <summary>
-        /// Rückgabe der Abstimmungsergebnisse
+        ///     Rückgabe der Abstimmungsergebnisse
         /// </summary>
         /// <param name="frameNumber"></param>
         /// <returns></returns>
@@ -63,7 +61,7 @@ namespace HackingBears.GameService.Core
             // Resultat zusammenzählen
             for (int i = 0; i < PlayerCount; i++)
             {
-                VotingResult result = new VotingResult()
+                VotingResult result = new VotingResult
                 {
                     PlayerId = i
                 };
@@ -83,6 +81,5 @@ namespace HackingBears.GameService.Core
         }
 
         #endregion
-
     }
-} 
+}
