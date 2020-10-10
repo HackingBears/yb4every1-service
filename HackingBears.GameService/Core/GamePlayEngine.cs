@@ -89,6 +89,7 @@ namespace HackingBears.GameService.Core
 
         private void Timer_OnElapsed(object sender, ElapsedEventArgs e)
         {
+ 
             // Frame klonen
             GameFrame frame = GetNextFrame(VotingManager.GetResult(FrameCounter + 1));
 
@@ -173,6 +174,7 @@ namespace HackingBears.GameService.Core
         {
             Score.Reset();
             FrameCounter = 0;
+            VotingManager.Reset();
             CurrentFrame = GetKickOffFrame(TeamType.Home);
         }
 
