@@ -22,8 +22,8 @@ namespace HackingBears.GameService.Core
 
         #region Events
 
-        public event EventHandler<GameEventEventArgs> OnGameEventHappened;
         public event EventHandler<GameFrameEventArgs> OnFrameChanged;
+        public event EventHandler<GameEventEventArgs> OnGameEventHappened;
         public event EventHandler<GameFinishedEventArgs> OnGameFinished;
         public event EventHandler<GameFrameEventArgs> OnGoal;
 
@@ -47,6 +47,8 @@ namespace HackingBears.GameService.Core
         private GamePositionProvider GamePositionProvider { get; } = new GamePositionProvider();
 
         private PlayerIdSelector PlayerIdSelector { get; } = new PlayerIdSelector();
+
+        private Random Random { get; } = new Random();
 
         private Score Score { get; } = new Score();
 
@@ -230,8 +232,23 @@ namespace HackingBears.GameService.Core
             ApplyBallPosition(newFrame, results.FirstOrDefault(r => r.GameAction.Action == Action.Shoot));
 
             // Has Ball 
-            newFrame.Players.ForEach(p => p.HasBall = HasBall(p.Position, newFrame.Ball));
+            AttributeBallToPlayer(newFrame.Players, newFrame.Ball);
+
             return newFrame;
+        }
+
+        private void AttributeBallToPlayer(List<FootballPlayer> players, Position ball)
+        {
+            players.ForEach(p => p.HasBall = HasBall(p.Position, ball));
+            List<FootballPlayer> playersWithBall = players.Where(fp => fp.HasBall).ToList();
+            int playersWithBallCount = playersWithBall.Count;
+            if (playersWithBallCount <= 1)
+            {
+                return;
+            }
+
+            int playerId = playersWithBall[Random.Next(0, playersWithBallCount)].Id;
+            players.ForEach(p => p.HasBall = p.Id == playerId);
         }
 
         private void ApplyBallPosition(GameFrame frame, VotingResult result)
