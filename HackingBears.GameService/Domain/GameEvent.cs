@@ -1,25 +1,25 @@
 namespace HackingBears.GameService.Domain
 {
-    public class CountDown
+    public sealed class GameEvent
     {
         #region Properties
 
         public int GameId { get; set; }
 
-        public int SecondsToGameStart { get; set; }
+        public string Message { get; set; }
 
         #endregion
 
         #region Constructor
 
-        public CountDown()
+        public GameEvent()
         {
         }
 
-        public CountDown(int gameId, int secondsToGameStart)
+        public GameEvent(int gameId, string message)
         {
             GameId = gameId;
-            SecondsToGameStart = secondsToGameStart;
+            Message = message;
         }
 
         #endregion

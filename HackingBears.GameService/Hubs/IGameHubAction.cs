@@ -32,11 +32,9 @@ namespace HackingBears.GameService.Hubs
         Task Goal(GameFrame frame);
 
         /// <summary>
-        ///     Zeit bis das Spiel startet
+        ///     Event - welches während des Spiels passieren kann (zum Beispiel Gelbe Kart, Rote Karte, Halbzeit)
         /// </summary>
-        /// <param name="countDown"></param>
-        /// <returns></returns>
-        Task UpdateSecondsToGame(CountDown countDown);
+        Task GameEventHappened(GameEvent gameEvent);
 
         #endregion
     }

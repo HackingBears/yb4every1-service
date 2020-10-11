@@ -52,7 +52,7 @@ namespace HackingBears.GameService.Core
                 gamePlayEngine.OnFrameChanged += GamePlayEngine_OnFrameChanged;
                 gamePlayEngine.OnGameFinished += GamePlayEngine_OnGameFinished;
                 gamePlayEngine.OnGoal += GamePlayEngine_OnGoal;
-                gamePlayEngine.OnCountDownChanged += GamePlayEngine_OnCountDownChanged;
+                gamePlayEngine.OnGameEventHappened += GamePlayEngine_OnGameEventHappenedPublished;
                 GamePlayEngines.Add(gameId, gamePlayEngine);
             }
         }
@@ -66,10 +66,10 @@ namespace HackingBears.GameService.Core
             }
         }
 
-        private void GamePlayEngine_OnCountDownChanged(object sender, GameCountDownEventArgs e)
+        private void GamePlayEngine_OnGameEventHappenedPublished(object sender, GameEventEventArgs e)
         {
-            Console.WriteLine($"Game starts in {e.CountDown.SecondsToGameStart} seconds");
-            HubContext.Clients.All.UpdateSecondsToGame(e.CountDown).Wait();
+            Console.WriteLine(e.GameEvent.Message);
+            HubContext.Clients.All.GameEventHappened(e.GameEvent).Wait();
         }
 
         private void GamePlayEngine_OnFrameChanged(object sender, GameFrameEventArgs e)
@@ -87,7 +87,7 @@ namespace HackingBears.GameService.Core
                 gamePlayEngine.OnFrameChanged -= GamePlayEngine_OnFrameChanged;
                 gamePlayEngine.OnGameFinished -= GamePlayEngine_OnGameFinished;
                 gamePlayEngine.OnGoal -= GamePlayEngine_OnGoal;
-                gamePlayEngine.OnCountDownChanged -= GamePlayEngine_OnCountDownChanged;
+                gamePlayEngine.OnGameEventHappened -= GamePlayEngine_OnGameEventHappenedPublished;
                 GamePlayEngines.Remove(gameId);
             }
 

@@ -22,7 +22,7 @@ namespace HackingBears.GameService.Core
 
         #region Events
 
-        public event EventHandler<GameCountDownEventArgs> OnCountDownChanged;
+        public event EventHandler<GameEventEventArgs> OnGameEventHappened;
         public event EventHandler<GameFrameEventArgs> OnFrameChanged;
         public event EventHandler<GameFinishedEventArgs> OnGameFinished;
         public event EventHandler<GameFrameEventArgs> OnGoal;
@@ -71,14 +71,14 @@ namespace HackingBears.GameService.Core
             Timer.Elapsed += Timer_OnElapsed;
             VotingManager = new VotingManager(12);
             GameId = gameId;
-            
+
             Init();
             CountDownTimer = new Timer
             {
                 Interval = 1000,
                 AutoReset = true
             };
-            CountDownTimer.Elapsed += CountDown_OnElapsed;
+            CountDownTimer.Elapsed += CountDown_OnSecondElapsed;
             CountDownTimer.Start();
         }
 
@@ -240,16 +240,16 @@ namespace HackingBears.GameService.Core
             {
                 return;
             }
-            
+
             for (int cnt = 0; cnt < SHOOT_FACTOR; cnt++)
             {
                 frame.Ball = frame.Ball + result.GameAction.Direction.ToPosition();
-                if(HasFieldLimitsAchieved(frame.Ball))
+                if (HasFieldLimitsAchieved(frame.Ball))
                 {
                     break;
-                } 
+                }
             }
-            
+
             ApplyPositionLimits(frame.Ball);
         }
 
@@ -305,7 +305,7 @@ namespace HackingBears.GameService.Core
             }
         }
 
-        private void CountDown_OnElapsed(object sender, ElapsedEventArgs e)
+        private void CountDown_OnSecondElapsed(object sender, ElapsedEventArgs e)
         {
             if (SecondsToGameStart <= 0)
             {
@@ -313,13 +313,13 @@ namespace HackingBears.GameService.Core
                 return;
             }
 
-            PublishCountdown(new CountDown(GameId, SecondsToGameStart));
+            PublishGameEvent(new GameEvent(GameId, $"Spiel beginnt in {SecondsToGameStart} Sekunden"));
             SecondsToGameStart--;
         }
 
-        private void PublishCountdown(CountDown countDown)
+        private void PublishGameEvent(GameEvent gameEvent)
         {
-            OnCountDownChanged?.Invoke(this, new GameCountDownEventArgs(countDown));
+            OnGameEventHappened?.Invoke(this, new GameEventEventArgs(gameEvent));
         }
 
         public void Dispose()
@@ -329,7 +329,7 @@ namespace HackingBears.GameService.Core
             Timer?.Dispose();
 
             CountDownTimer.Stop();
-            CountDownTimer.Elapsed -= CountDown_OnElapsed;
+            CountDownTimer.Elapsed -= CountDown_OnSecondElapsed;
             CountDownTimer?.Dispose();
         }
 

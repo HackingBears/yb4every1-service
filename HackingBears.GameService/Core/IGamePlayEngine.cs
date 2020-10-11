@@ -10,7 +10,7 @@ namespace HackingBears.GameService.Core
         event EventHandler<GameFrameEventArgs> OnFrameChanged;
         event EventHandler<GameFinishedEventArgs> OnGameFinished;
         event EventHandler<GameFrameEventArgs> OnGoal;
-        event EventHandler<GameCountDownEventArgs> OnCountDownChanged;
+        event EventHandler<GameEventEventArgs> OnGameEventHappened;
 
         #endregion
 

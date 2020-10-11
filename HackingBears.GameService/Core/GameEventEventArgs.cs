@@ -3,19 +3,19 @@ using HackingBears.GameService.Domain;
 
 namespace HackingBears.GameService.Core
 {
-    public sealed class GameCountDownEventArgs : EventArgs
+    public sealed class GameEventEventArgs : EventArgs
     {
         #region Properties
 
-        public CountDown CountDown { get; }
+        public GameEvent GameEvent { get; }
 
         #endregion
 
         #region Constructor
 
-        public GameCountDownEventArgs(CountDown countDown)
+        public GameEventEventArgs(GameEvent gameEvent)
         {
-            CountDown = countDown;
+            GameEvent = gameEvent;
         }
 
         #endregion
