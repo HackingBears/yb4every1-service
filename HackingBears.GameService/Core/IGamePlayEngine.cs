@@ -10,6 +10,7 @@ namespace HackingBears.GameService.Core
         event EventHandler<GameFrameEventArgs> OnFrameChanged;
         event EventHandler<GameFinishedEventArgs> OnGameFinished;
         event EventHandler<GameFrameEventArgs> OnGoal;
+        event EventHandler<GameCountDownEventArgs> OnCountDownChanged;
 
         #endregion
 
@@ -26,7 +27,7 @@ namespace HackingBears.GameService.Core
         GameFrame GetCurrentFrame();
 
         void Start();
-
+        
         void AddVoting(Voting voting);
 
         #endregion

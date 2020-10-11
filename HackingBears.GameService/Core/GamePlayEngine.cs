@@ -10,7 +10,7 @@ using Timer = System.Timers.Timer;
 
 namespace HackingBears.GameService.Core
 {
-    public sealed class GamePlayEngine : IGamePlayEngine
+    public sealed class GamePlayEngine : IGamePlayEngine, IDisposable
     {
         #region Constants
 
@@ -22,6 +22,7 @@ namespace HackingBears.GameService.Core
 
         #region Events
 
+        public event EventHandler<GameCountDownEventArgs> OnCountDownChanged;
         public event EventHandler<GameFrameEventArgs> OnFrameChanged;
         public event EventHandler<GameFinishedEventArgs> OnGameFinished;
         public event EventHandler<GameFrameEventArgs> OnGoal;
@@ -33,9 +34,11 @@ namespace HackingBears.GameService.Core
         public GameFrame CurrentFrame { get; private set; }
 
         public int GameTime
-            => (FrameCounter * VOTING_TIME_IN_SECONDS) / 3;
+            => (FrameCounter * VOTING_TIME_IN_SECONDS) / 6;
 
         public GameStateDescription State { get; } = GameStateDescription.OpenForRegistration;
+
+        private Timer CountDownTimer { get; }
 
         private int FrameCounter { get; set; }
 
@@ -47,6 +50,8 @@ namespace HackingBears.GameService.Core
 
         private Score Score { get; } = new Score();
 
+        private int SecondsToGameStart { get; set; } = 15;
+
         private Timer Timer { get; }
 
         private VotingManager VotingManager { get; }
@@ -57,6 +62,7 @@ namespace HackingBears.GameService.Core
 
         public GamePlayEngine(int gameId)
         {
+            Console.WriteLine($"Game registered - will start in {SecondsToGameStart} seconds");
             Timer = new Timer
             {
                 Interval = VOTING_TIME_IN_SECONDS * 1000,
@@ -65,7 +71,15 @@ namespace HackingBears.GameService.Core
             Timer.Elapsed += Timer_OnElapsed;
             VotingManager = new VotingManager(12);
             GameId = gameId;
+            
             Init();
+            CountDownTimer = new Timer
+            {
+                Interval = 1000,
+                AutoReset = true
+            };
+            CountDownTimer.Elapsed += CountDown_OnElapsed;
+            CountDownTimer.Start();
         }
 
         #endregion
@@ -85,11 +99,9 @@ namespace HackingBears.GameService.Core
             frame.GameTime = GameTime.ToString("00") + " min";
             return frame;
         }
-           
 
         private void Timer_OnElapsed(object sender, ElapsedEventArgs e)
         {
- 
             // Frame klonen
             GameFrame frame = GetNextFrame(VotingManager.GetResult(FrameCounter + 1));
 
@@ -166,7 +178,11 @@ namespace HackingBears.GameService.Core
 
         public void Start()
         {
+            CountDownTimer.AutoReset = false;
+            CountDownTimer.Stop();
+
             Init();
+            Console.WriteLine("Game is started");
             Timer.Start();
         }
 
@@ -176,6 +192,7 @@ namespace HackingBears.GameService.Core
             FrameCounter = 0;
             VotingManager.Reset();
             CurrentFrame = GetKickOffFrame(TeamType.Home);
+            SecondsToGameStart = 15;
         }
 
         public void AddVoting(Voting voting)
@@ -223,21 +240,17 @@ namespace HackingBears.GameService.Core
             {
                 return;
             }
-
-            if (HasFieldLimitsAchieved(frame.Ball))
-            {
-                return;
-            }
-
+            
             for (int cnt = 0; cnt < SHOOT_FACTOR; cnt++)
             {
-                if (HasFieldLimitsAchieved(frame.Ball))
+                frame.Ball = frame.Ball + result.GameAction.Direction.ToPosition();
+                if(HasFieldLimitsAchieved(frame.Ball))
                 {
                     break;
-                }
-
-                frame.Ball = frame.Ball + result.GameAction.Direction.ToPosition();
+                } 
             }
+            
+            ApplyPositionLimits(frame.Ball);
         }
 
         private void ApplyPlayerMotions(FootballPlayer player, List<VotingResult> results)
@@ -290,6 +303,34 @@ namespace HackingBears.GameService.Core
             {
                 position.Y = FootballField.MAX_Y;
             }
+        }
+
+        private void CountDown_OnElapsed(object sender, ElapsedEventArgs e)
+        {
+            if (SecondsToGameStart <= 0)
+            {
+                Start();
+                return;
+            }
+
+            PublishCountdown(new CountDown(GameId, SecondsToGameStart));
+            SecondsToGameStart--;
+        }
+
+        private void PublishCountdown(CountDown countDown)
+        {
+            OnCountDownChanged?.Invoke(this, new GameCountDownEventArgs(countDown));
+        }
+
+        public void Dispose()
+        {
+            Timer.Stop();
+            Timer.Elapsed -= Timer_OnElapsed;
+            Timer?.Dispose();
+
+            CountDownTimer.Stop();
+            CountDownTimer.Elapsed -= CountDown_OnElapsed;
+            CountDownTimer?.Dispose();
         }
 
         #endregion

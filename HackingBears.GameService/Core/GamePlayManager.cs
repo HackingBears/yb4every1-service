@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +52,7 @@ namespace HackingBears.GameService.Core
                 gamePlayEngine.OnFrameChanged += GamePlayEngine_OnFrameChanged;
                 gamePlayEngine.OnGameFinished += GamePlayEngine_OnGameFinished;
                 gamePlayEngine.OnGoal += GamePlayEngine_OnGoal;
+                gamePlayEngine.OnCountDownChanged += GamePlayEngine_OnCountDownChanged;
                 GamePlayEngines.Add(gameId, gamePlayEngine);
             }
         }
@@ -62,6 +64,12 @@ namespace HackingBears.GameService.Core
                 GamePlayEngines.TryGetValue(gameId, out IGamePlayEngine engine);
                 return engine?.State ?? GameStateDescription.Undefined;
             }
+        }
+
+        private void GamePlayEngine_OnCountDownChanged(object sender, GameCountDownEventArgs e)
+        {
+            Console.WriteLine($"Game starts in {e.CountDown.SecondsToGameStart} seconds");
+            HubContext.Clients.All.UpdateSecondsToGame(e.CountDown).Wait();
         }
 
         private void GamePlayEngine_OnFrameChanged(object sender, GameFrameEventArgs e)
@@ -79,6 +87,7 @@ namespace HackingBears.GameService.Core
                 gamePlayEngine.OnFrameChanged -= GamePlayEngine_OnFrameChanged;
                 gamePlayEngine.OnGameFinished -= GamePlayEngine_OnGameFinished;
                 gamePlayEngine.OnGoal -= GamePlayEngine_OnGoal;
+                gamePlayEngine.OnCountDownChanged -= GamePlayEngine_OnCountDownChanged;
                 GamePlayEngines.Remove(gameId);
             }
 
@@ -94,6 +103,11 @@ namespace HackingBears.GameService.Core
         {
             lock (((ICollection) GamePlayEngines).SyncRoot)
             {
+                if (!GamePlayEngines.ContainsKey(gameId))
+                {
+                    OpenGameForRegistration(gameId);
+                }
+
                 return GamePlayEngines[gameId].RegisterPlayer(userId, teamType);
             }
         }

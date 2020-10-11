@@ -31,6 +31,13 @@ namespace HackingBears.GameService.Hubs
         /// <returns></returns>
         Task Goal(GameFrame frame);
 
+        /// <summary>
+        ///     Zeit bis das Spiel startet
+        /// </summary>
+        /// <param name="countDown"></param>
+        /// <returns></returns>
+        Task UpdateSecondsToGame(CountDown countDown);
+
         #endregion
     }
 }
